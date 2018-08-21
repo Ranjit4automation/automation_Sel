@@ -1,0 +1,134 @@
+package automationtTest;
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import org.openqa.selenium.TakesScreenshot;
+
+public class NewTest {
+	public WebDriver driver;
+	
+	
+  @BeforeTest
+  public void f() {	  
+ 	  System.out.println("launching firefox browser"); 
+  	System.setProperty("webdriver.firefox.marionette","C:\\geckodriver.exe");
+
+  }
+  
+  @AfterMethod
+  
+  public void AfterTest()
+  {
+	  
+	  System.out.println("---------aferMethod ran each test---------");
+  }
+  
+  
+  @Test(priority= 1)
+  public void OpenWebsite()
+  {
+		driver = new FirefoxDriver();
+		System.out.println("running test1 /n ");
+		driver.get("http://newtours.demoaut.com");
+		System.out.println("running test1");
+  }
+  
+  
+  @Test(priority= 2)
+  public void LoggingIn()
+  {
+	  
+		System.out.println("running test2");
+      WebElement username = driver.findElement(By.xpath("//input[@name='userName']"));
+    username.sendKeys("Rnzit");    
+
+    WebElement password = driver.findElement(By.xpath("//input[@name='password']"));
+    password.sendKeys("Inception@20");
+    
+    driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+    
+    WebElement login = driver.findElement(By.xpath("//input[@name='login']"));
+     login.click(); 	  
+     
+     
+////creating an object of Interface-TakesScreenshot
+//TakesScreenshot ts = (TakesScreenshot)driver;
+//
+//File source = ts.getScreenshotAs(OutputType.FILE);
+//
+//     FileUtils.
+     
+     
+     
+  
+//  Assert.assertEquals(12, 13);
+  }
+  
+  @Test(priority= 3,dependsOnMethods = "LoggingIn")
+  public void FillDetails()
+  
+  {
+		System.out.println("running test3");
+  WebElement radioBtn = driver.findElement(By.xpath("//input[@name='tripType'][2]"));  
+  radioBtn.click();
+  
+  Select passenger = new Select(driver.findElement(By.name("passCount")));
+  passenger.selectByVisibleText("2");
+  
+  Select DepartFrm = new Select(driver.findElement(By.name("fromPort")));             
+  DepartFrm.selectByVisibleText("London");
+                		  		
+  Select On = new Select(driver.findElement(By.name("fromDay")));                        
+  On.selectByVisibleText("23"); 
+  
+  Select fromMonth = new Select(driver.findElement(By.name("fromMonth")));                        
+  fromMonth.selectByVisibleText("February");             
+  
+
+  Select Arriving = new Select(driver.findElement(By.name("toPort")));                        
+  Arriving.selectByVisibleText("Frankfurt");  
+  
+  
+  WebElement Servicecls = driver.findElement(By.xpath("//input[@name='servClass'][2]")); 
+  Servicecls.click();
+  WebElement Continue = driver.findElement(By.xpath("//input[@name='findFlights']"));       
+  Continue.click();
+  WebElement same = driver.findElement(By.xpath("/html/body/div//table[1]/tbody/tr[3]/td[2]/font/b"));
+  String abc  = same.getText();
+  System.out.println(abc);
+}
+  
+  //code for signout
+ @Test(priority= 4,dependsOnMethods= "FillDetails" )
+ public void logout()
+ {
+		System.out.println("running test4");
+  WebElement logout = driver.findElement(By.linkText("SIGN-OFF"));
+  logout.click();
+  String currentURL= driver.getCurrentUrl();
+  Assert.assertTrue(currentURL.contains("mercurysignon.php"));
+   
+ }
+  
+ @AfterClass 
+ public void closeBrowser()
+ {
+	 
+	 System.out.println("=======CLOSED BROWSER=======");
+	 driver.quit();
+ }
+  
+}
+
+ 
